@@ -1,4 +1,9 @@
-因最近比较忙，所以有问题直接issues就可以了，看到我会回复并提供修改帮助的
+copy by https://github.com/catlane/chunk-file-upload
+star 请给原作者
+
+
+
+
 
 laravel-admin extension
 ======
