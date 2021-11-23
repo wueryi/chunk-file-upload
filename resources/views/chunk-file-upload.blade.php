@@ -35,7 +35,7 @@
         <div class="input-group">
             <span class="input-group-addon">已上传内容</span>
             @if (empty(old($column, $value)))
-                <input readonly style="background-color: #fff" type="text" id="{{$name}}-savedpath" name="{{$name}}"
+                <input readonly style="background-color: #fff" type="text" id="{{$name}}-savedpath" name="{{$name}}" value=""
                        class="form-control title"
                        placeholder="暂未上传{{$label}}">
             @else

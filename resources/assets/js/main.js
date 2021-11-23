@@ -1,6 +1,6 @@
 function chunk_file(name, accept, disk, driver) {
-    var initVal = $('#' + name + '-savedpath').val();
-    initVal = initVal ? true : false;
+    var initValList = $('#' + name + '-savedpath').val();
+    initVal = initValList ? true : false;
     var $wrap = $('#uploader' + name),
         // 图片容器
         $queue = $('<ul class="filelist"></ul>')
@@ -244,7 +244,6 @@ function chunk_file(name, accept, disk, driver) {
             $placeHolder.addClass('element-invisible');
             $statusBar.show();
         }
-
         addFile(file);
         setState('ready');
         updateTotalProgress();
@@ -924,7 +923,7 @@ function chunk_file(name, accept, disk, driver) {
         swal('重置上传文件成功', '', 'success')
     })
 
-    function getFilInfo(path = '') {
+    function getFilInfoList(file_json = '') {
         var obj = {};
         $.ajax({
             async: false,
@@ -932,7 +931,7 @@ function chunk_file(name, accept, disk, driver) {
             url: window.chunk_file.prefix + '/' + "chunk-file-upload/get_file_info",
             dataType: 'json',
             data: {
-                file: path,
+                file_json: file_json,
                 _token: $('meta[name="csrf-token"]').attr('content')
             },
             success: function (res) {
@@ -944,16 +943,19 @@ function chunk_file(name, accept, disk, driver) {
 
     //文件回显
     var data = $('#' + name + '-savedpath').attr('value');
-    fileList = JSON.parse(data);
-    console.log(fileList)
-    $.each(fileList, function (index, item) {
-        var obj = getFilInfo(item);
-        var file = new WebUploader.File(obj);
-        //此处是关键，将文件状态改为'已上传完成'
-        file.setStatus('complete')
-        uploader.addFiles(file)
-        $('#' + file.id).attr('dataSrc', item);
-    });
+    if (data != '') {
+        var fileList = getFilInfoList(data);
+        $.each(fileList, function (index, item) {
+            var obj = item;
+            var file = new WebUploader.File(obj);
+            //此处是关键，将文件状态改为'已上传完成'
+            uploader.addFiles(file)
+            uploader.skipFile(file)
+            $('#' + file.id).attr('dataSrc', item);
+        });
+        uploader.refresh();
+    }
+
     return uploader;
 }
 

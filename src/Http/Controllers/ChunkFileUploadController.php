@@ -205,15 +205,24 @@ class ChunkFileUploadController extends Controller
     public function getFileinfo(Request $request)
     {
         try {
-            $file = $request->input('file', '');
+            $response = [];
+            $file_json = $request->input('file_json', '');
+            $file_list = json_decode($file_json, true);
             $disk = config('chunk_file_upload.default.disk');
-            $fileInfo = new \SplFileInfo(Storage::disk($disk)->path($file));
-            return response()->json([
-                'name' => $fileInfo->getBasename(),
-                'size' => $fileInfo->getSize(),
-                'lastModifiedDate' => $fileInfo->getMTime(),
-                'ext' => $fileInfo->getExtension(),
-            ]);
+            if (count($file_list) > 0) {
+                foreach ($file_list as $k => $value) {
+                    $fileInfo = new \SplFileInfo(Storage::disk($disk)->path($value));
+                    $response[] = [
+                        'name' => $fileInfo->getBasename(),
+                        'size' => $fileInfo->getSize(),
+                        'lastModifiedDate' => $fileInfo->getMTime(),
+                        'ext' => $fileInfo->getExtension(),
+                        'file' => $value,
+                    ];
+                    unset($fileInfo);
+                }
+            }
+            return response()->json($response);
         } catch (\Exception $exception) {
             return response()->json(['code' => 0, 'msg' => $exception->getMessage()]);
         }
