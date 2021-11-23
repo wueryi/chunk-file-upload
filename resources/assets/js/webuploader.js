@@ -4195,7 +4195,10 @@
         api.addValidator('fileNumLimit', function () {
             var uploader = this,
                 opts = uploader.options,
-                count = 0,
+                //TODO
+                //若设置count=0则每次上传都会重置，否则控制总数
+                count = uploader.getStats().successNum,
+                //TODO
                 max = parseInt(opts.fileNumLimit, 10),
                 flag = true;
 

@@ -951,7 +951,7 @@ function chunk_file(name, accept, disk, driver) {
             //此处是关键，将文件状态改为'已上传完成'
             uploader.addFiles(file)
             uploader.skipFile(file)
-            $('#' + file.id).attr('dataSrc', item);
+            $('#' + file.id).attr('dataSrc', item.file);
         });
         uploader.refresh();
     }
