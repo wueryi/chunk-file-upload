@@ -476,7 +476,7 @@ function chunk_file(name, accept, disk, driver) {
                 }
                 //先拿出来
                 var data = $('#' + name + '-savedpath').attr('value');
-                console.log(data)
+                // console.log(data)
                 if (!data) {//为空
                     data = [];
                     data.push(res.key);
@@ -792,8 +792,6 @@ function chunk_file(name, accept, disk, driver) {
                     data.splice(i, 1);
                 }
             }
-            console.log('remove', data)
-
             if (!data.length) {
                 data = '';
             } else {
@@ -925,6 +923,37 @@ function chunk_file(name, accept, disk, driver) {
         $('#' + name + '-savedpath').attr('value', '')
         swal('重置上传文件成功', '', 'success')
     })
-    return uploader;
 
+    function getFilInfo(path = '') {
+        var obj = {};
+        $.ajax({
+            async: false,
+            type: 'post',
+            url: window.chunk_file.prefix + '/' + "chunk-file-upload/get_file_info",
+            dataType: 'json',
+            data: {
+                file: path,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                obj = res;
+            }
+        });
+        return obj;
+    }
+
+    //文件回显
+    var data = $('#' + name + '-savedpath').attr('value');
+    fileList = JSON.parse(data);
+    console.log(fileList)
+    $.each(fileList, function (index, item) {
+        var obj = getFilInfo(item);
+        var file = new WebUploader.File(obj);
+        //此处是关键，将文件状态改为'已上传完成'
+        file.setStatus('complete')
+        uploader.addFiles(file)
+        $('#' + file.id).attr('dataSrc', item);
+    });
+    return uploader;
 }
+

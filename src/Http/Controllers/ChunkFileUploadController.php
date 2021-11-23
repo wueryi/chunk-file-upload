@@ -47,7 +47,7 @@ class ChunkFileUploadController extends Controller
     public function upload(Request $request)
     {
         $path = Storage::disk($request->disk)->putFileAs(
-            'large_files/'.date('Y/m/d', time()), $request->file('file'), $request->key
+            'large_files/' . date('Y/m/d', time()), $request->file('file'), $request->key
         );
         return $this->returnResult($path);
     }
@@ -148,20 +148,20 @@ class ChunkFileUploadController extends Controller
         // 开始写入
         $out = fopen($save_file, "wb");
         // 增加文件锁
-        if ( flock ( $out , LOCK_EX ) ) {
-        foreach ($block_info as $b) {
-            // 读取文件
-            if (!$in = @fopen($dir . '/' . $b, "rb")) {
-                break;
+        if (flock($out, LOCK_EX)) {
+            foreach ($block_info as $b) {
+                // 读取文件
+                if (!$in = @fopen($dir . '/' . $b, "rb")) {
+                    break;
+                }
+                // 写入文件
+                while ($buff = fread($in, 4096)) {
+                    fwrite($out, $buff);
+                }
+                @fclose($in);
+                @unlink($dir . '/' . $b);
             }
-            // 写入文件
-            while ($buff = fread($in, 4096)) {
-                fwrite($out, $buff);
-            }
-            @fclose($in);
-            @unlink($dir . '/' . $b);
-        }
-            flock ( $out , LOCK_UN );
+            flock($out, LOCK_UN);
         }
         @fclose($out);
         @rmdir($dir);
@@ -200,5 +200,22 @@ class ChunkFileUploadController extends Controller
             'hash' => md5($path),
             'key' => $path
         ]);
+    }
+
+    public function getFileinfo(Request $request)
+    {
+        try {
+            $file = $request->input('file', '');
+            $disk = config('chunk_file_upload.default.disk');
+            $fileInfo = new \SplFileInfo(Storage::disk($disk)->path($file));
+            return response()->json([
+                'name' => $fileInfo->getBasename(),
+                'size' => $fileInfo->getSize(),
+                'lastModifiedDate' => $fileInfo->getMTime(),
+                'ext' => $fileInfo->getExtension(),
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json(['code' => 0, 'msg' => $exception->getMessage()]);
+        }
     }
 }

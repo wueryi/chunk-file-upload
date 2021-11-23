@@ -51,9 +51,9 @@
             @endif
         </div>
         @include('admin::form.help-block')
-        <div class="input-group">
-            <button type="button" class="btn btn-block btn-default reset-{{$name}}">重置</button>
-        </div>
+{{--        <div class="input-group">--}}
+{{--            <button type="button" class="btn btn-block btn-default reset-{{$name}}">重置</button>--}}
+{{--        </div>--}}
     </div>
 </div>
 
