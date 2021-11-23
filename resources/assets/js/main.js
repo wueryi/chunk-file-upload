@@ -159,7 +159,7 @@ function chunk_file(name, accept, disk, driver) {
         pick: {
             id: '#filePicker' + name,
             label: '点击选择文件',
-            multiple:false
+            multiple: false
         },
         duplicate: true,
         resize: false,
@@ -454,7 +454,7 @@ function chunk_file(name, accept, disk, driver) {
                         });
                     }
                 },
-                error:function (error) {
+                error: function (error) {
                     // $('#' + name + '-savedpath').val('');
                     console.log(error.statusText)
                     swal('上传失败', '', 'error').then(function () {
@@ -466,7 +466,7 @@ function chunk_file(name, accept, disk, driver) {
 
     function UploadComplete(file, res) {
         if (window.chunk_file.fileNumLimit <= 1) {
-            $('#' + name + '-savedpath').attr('value',res.key);
+            $('#' + name + '-savedpath').attr('value', res.key);
         } else {
             if (window.chunk_file.saveType == 'json') {//为json类型
 
@@ -490,8 +490,8 @@ function chunk_file(name, accept, disk, driver) {
 
                     data.push(res.key);
                 }
-                $('#' + name + '-savedpath').attr('value',JSON.stringify(data));
-
+                $('#' + name + '-savedpath').attr('value', JSON.stringify(data));
+                $('#' + file.id).attr('dataSrc', res.key);
             }
 
         }
@@ -792,12 +792,15 @@ function chunk_file(name, accept, disk, driver) {
                     data.splice(i, 1);
                 }
             }
+            console.log('remove', data)
+
             if (!data.length) {
                 data = '';
             } else {
                 data = JSON.stringify(data);
             }
-            $('#' + name + '-savedpath').val(data);
+
+            $('#' + name + '-savedpath').attr('value', data);
         }
     }
 
@@ -917,7 +920,7 @@ function chunk_file(name, accept, disk, driver) {
     // $(document).on('click', '#' + name + '-savedpath', function () {
     //     window.open('/storage/' + $(this).val());
     // });
-    $(document).on('click', '.reset-'+name, function () {
+    $(document).on('click', '.reset-' + name, function () {
         console.log($('#' + name + '-savedpath').attr('value'))
         $('#' + name + '-savedpath').attr('value', '')
         swal('重置上传文件成功', '', 'success')

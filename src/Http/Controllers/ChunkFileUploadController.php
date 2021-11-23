@@ -146,9 +146,9 @@ class ChunkFileUploadController extends Controller
 
         $save_file = $save_dir . '/' . $file_name;
         // 开始写入
-        $out = @fopen($save_file, "wb");
+        $out = fopen($save_file, "wb");
         // 增加文件锁
-//        if ( flock ( $out , LOCK_EX ) ) {
+        if ( flock ( $out , LOCK_EX ) ) {
         foreach ($block_info as $b) {
             // 读取文件
             if (!$in = @fopen($dir . '/' . $b, "rb")) {
@@ -161,8 +161,8 @@ class ChunkFileUploadController extends Controller
             @fclose($in);
             @unlink($dir . '/' . $b);
         }
-//            flock ( $out , LOCK_UN );
-//        }
+            flock ( $out , LOCK_UN );
+        }
         @fclose($out);
         @rmdir($dir);
         //然后删除那个文件夹
