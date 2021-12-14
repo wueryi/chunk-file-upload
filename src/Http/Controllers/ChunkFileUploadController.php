@@ -208,6 +208,9 @@ class ChunkFileUploadController extends Controller
             $response = [];
             $file_json = $request->input('file_json', '');
             $file_list = json_decode($file_json, true);
+            if (empty($file_list) && $file_json != '') {
+                $file_list = [$file_json];
+            }
             $disk = config('chunk_file_upload.default.disk');
             if (count($file_list) > 0) {
                 foreach ($file_list as $k => $value) {
